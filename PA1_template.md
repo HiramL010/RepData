@@ -66,9 +66,9 @@ follows:
 data$date <- as.Date(data$date)
 data$steps <- as.numeric(data$steps)
 ```
-## What is mean total number of steps taken per day?
 
-First, we calculate the total number of steps taken per day
+
+Then, we calculate the total number of steps taken per day
 
 
 
@@ -81,7 +81,7 @@ Below you can see the histogram showing the total number of steps taken per day
 ggplot(steps_t, aes(x=date, y=steps)) + geom_bar(stat = "identity")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+![](PA1_template_files/figure-html/plot1-1.png)<!-- -->
 
 Using the information in *steps_t*, the *mean* and *median* of the total number 
 of steps taken per day are computed as:
@@ -110,7 +110,7 @@ Now, to see the pattern, we plot the time series:
 ggplot(steps_int, aes(interval, steps)) + geom_line()
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](PA1_template_files/figure-html/fig2-1.png)<!-- -->
 
 And, to identify the 5-minute interval which contains the maximum number of steps,
 we compute:
@@ -154,11 +154,15 @@ is:
 
 ```r
 steps_imputed <- aggregate(steps ~ date, d_split, sum)
+```
 
+
+
+```r
 ggplot(steps_imputed, aes(x=date, y=steps)) + geom_bar(stat = "identity")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](PA1_template_files/figure-html/plot3-1.png)<!-- -->
 
 And the new mean and median are:
 
@@ -216,7 +220,7 @@ following:
 ggplot(d_avg, aes(interval, steps)) + facet_wrap(. ~ f, nrow = 2,ncol=1) + geom_line()
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+![](PA1_template_files/figure-html/plot4-1.png)<!-- -->
 
 As we can see, the subject has a lower number of steps in the weekend.
 

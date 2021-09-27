@@ -48,16 +48,16 @@ data$date <- as.Date(data$date)
 data$steps <- as.numeric(data$steps)
 
 ```
-## What is mean total number of steps taken per day?
 
-First, we calculate the total number of steps taken per day
+
+Then, we calculate the total number of steps taken per day
 
 
 ```{r}
 steps_t <- aggregate(steps ~ date, data, sum)
 ```
 Below you can see the histogram showing the total number of steps taken per day 
-```{r}
+```{r plot1}
 ggplot(steps_t, aes(x=date, y=steps)) + geom_bar(stat = "identity")
 ```
 
@@ -81,7 +81,7 @@ steps_int <- aggregate(steps ~ interval, data, mean)
 ```
 Now, to see the pattern, we plot the time series:
 
-```{r}
+```{r fig2}
 ggplot(steps_int, aes(interval, steps)) + geom_line()
 ```
 
@@ -119,7 +119,10 @@ is:
 
 ```{r}
 steps_imputed <- aggregate(steps ~ date, d_split, sum)
+```
 
+
+```{r plot3}
 ggplot(steps_imputed, aes(x=date, y=steps)) + geom_bar(stat = "identity")
 ```
 
@@ -159,7 +162,7 @@ d_avg <- aggregate(steps ~ f + interval, d_split, mean)
 The time series that shows the activity patterns in weekday and weekends are the
 following:
 
-```{r}
+```{r plot4}
 ggplot(d_avg, aes(interval, steps)) + facet_wrap(. ~ f, nrow = 2,ncol=1) + geom_line()
 ```
 
