@@ -30,83 +30,117 @@ This assignment answers the following questions:
 
 First, we load the packages and read the dataset *activity.csv*. 
 
-```{r begin}
+
+```r
 library(ggplot2)
 library(dplyr)
+```
 
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 directory <- "./repdata_data_activity/activity.csv"
 
 data <- read.csv(directory, header = T)
-
 ```
 The format of the *date* and *steps* variables are changed to date and numeric as 
 follows:
 
-```{r}
 
+```r
 data$date <- as.Date(data$date)
 data$steps <- as.numeric(data$steps)
-
 ```
 ## What is mean total number of steps taken per day?
 
 First, we calculate the total number of steps taken per day
 
 
-```{r}
+
+```r
 steps_t <- aggregate(steps ~ date, data, sum)
 ```
 Below you can see the histogram showing the total number of steps taken per day 
-```{r}
+
+```r
 ggplot(steps_t, aes(x=date, y=steps)) + geom_bar(stat = "identity")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 Using the information in *steps_t*, the *mean* and *median* of the total number 
 of steps taken per day are computed as:
 
-```{r}
+
+```r
 steps_t_mean <- mean(steps_t$steps)
 steps_t_median <- median(steps_t$steps)
 ```
 
-which result to be `r steps_t_mean` and `r steps_t_median`, respectively.
+which result to be 1.0766189\times 10^{4} and 1.0765\times 10^{4}, respectively.
 
 ## What is the average daily activity pattern?
 
 To determine the average daily activity pattern, we divide the dataset according
 to the intervals, and for each interval the mean is computed:
 
-```{r}
+
+```r
 steps_int <- aggregate(steps ~ interval, data, mean)
 ```
 Now, to see the pattern, we plot the time series:
 
-```{r}
+
+```r
 ggplot(steps_int, aes(interval, steps)) + geom_line()
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 And, to identify the 5-minute interval which contains the maximum number of steps,
 we compute:
 
-```{r}
+
+```r
 steps_int_max <- steps_int[steps_int$steps %in% max(steps_int$steps), ]
 ```
 
-That corresponds to the interval `r steps_int_max[1]` and maximum number of
-steps `r steps_int_max[2]`.
+That corresponds to the interval 835 and maximum number of
+steps 206.1698113.
 
 ## Imputing missing values
 
 The total number of missing values in the column *steps* are:
 
-```{r}
+
+```r
 sum(is.na(data))
+```
+
+```
+## [1] 2304
 ```
 
 So, the strategy to fill in all of the missing values in the dataset is to use
 the mean for that 5-minute interval:
 
-```{r}
+
+```r
 d_split <- data %>% group_by(interval) %>% mutate_at(vars(steps), 
                                                ~ ifelse(is.na(.), mean(., na.rm=T), .) )
 ```
@@ -117,17 +151,32 @@ the missing data filled in.
 The histogram of the total number of steps taken each day, using the new dataset,
 is:
 
-```{r}
+
+```r
 steps_imputed <- aggregate(steps ~ date, d_split, sum)
 
 ggplot(steps_imputed, aes(x=date, y=steps)) + geom_bar(stat = "identity")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
 And the new mean and median are:
 
-```{r}
+
+```r
 mean(steps_imputed$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(steps_imputed$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 In comparison with the previous computed values, the mean remain the same but
@@ -138,13 +187,15 @@ the median now is equal to the mean.
 We add a new column to the *d_split* dataset that indicates the day of the week
 that corresponds to the date in the column *date*:
 
-```{r}
+
+```r
 d_split$day <- weekdays(d_split$date)
 ```
 
 Now, we create a new variable with the levels "weekday" and "weekends":
 
-```{r}
+
+```r
 days <- unique(d_split$day)
 
 d_split$f <- ifelse(d_split$day %in% days[1:5], "weekday", "weekend") 
@@ -153,15 +204,19 @@ d_split$f <- ifelse(d_split$day %in% days[1:5], "weekday", "weekend")
 And then, we divide the *steps* values according to if they correspond to 
 "weekday" or "weekend", and in intervals. Then, the average is computed:
 
-```{r}
+
+```r
 d_avg <- aggregate(steps ~ f + interval, d_split, mean)
 ```
 The time series that shows the activity patterns in weekday and weekends are the
 following:
 
-```{r}
+
+```r
 ggplot(d_avg, aes(interval, steps)) + facet_wrap(. ~ f, nrow = 2,ncol=1) + geom_line()
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
 As we can see, the subject has a lower number of steps in the weekend.
 
